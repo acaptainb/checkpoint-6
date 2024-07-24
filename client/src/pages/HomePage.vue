@@ -35,11 +35,11 @@ async function getAllEvents() {
         <h2>Upcoming events</h2>
         <div class="row">
 
-          <!-- <article v-for="event in Allevents" :key="event.">
-            <EventArticle /> -->
+          <article v-for="event in Allevents" :key="event.id">
+            <EventArticle />
 
-          <!-- </article> -->
-          {{ Allevents }}
+          </article>
+          <!-- {{ Allevents }} -->
         </div>
       </div>
     </section>
