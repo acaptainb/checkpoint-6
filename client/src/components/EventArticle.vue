@@ -1,24 +1,29 @@
 <script setup>
+import { RouterLink } from 'vue-router';
+import { Event } from '../models/Event.js';
 
+defineProps({ Towerevent: Event })
 </script>
 
 
 <template>
     <section>
         <div class="row">
-            <div class="col-12">
-                <div class="myCard">
-                    <div class="innerCard">
-                        <div class="frontSide">
-                            <p class="title">FRONT SIDE</p>
-                            <p>Hover Me</p>
-                        </div>
-                        <div class="backSide">
-                            <p class="title">BACK SIDE</p>
-                            <p>Leave Me</p>
+            <div class="col-4 ">
+                <RouterLink :to="{ name: 'Event Details', params: { eventId: Towerevent.id } }">
+                    <div class="myCard my-2">
+                        <div class="innerCard">
+                            <div class="frontSide">
+                                <p class="title"> {{ Towerevent.name }}</p>
+                                <img :src="Towerevent.coverImg" class="img-fluid rounded" alt="">
+                                <p>{{ Towerevent.location }} {{ Towerevent.capacity }} People Attending</p>
+                            </div>
+                            <div class="backSide">
+                                <p class="titleback">{{ Towerevent.description.slice(0, 200) + '...' }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </RouterLink>
             </div>
         </div>
     </section>
@@ -26,18 +31,11 @@
 
 
 <style lang="scss" scoped>
-section {
-    display: flex;
-    // justify-content: center;
-    overflow: hidden;
-}
-
-
 .myCard {
     background-color: transparent;
-    width: 190px;
-    height: 254px;
-    perspective: 1000px;
+    width: 220px;
+    height: 300px;
+    // perspective: 1000px;
 }
 
 .title {
@@ -47,12 +45,19 @@ section {
     margin: 0;
 }
 
+.titleback {
+    font-size: 1em;
+    font-weight: 400;
+    text-align: center;
+    margin: 0;
+}
+
 .innerCard {
     position: relative;
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.8s;
+    transition: transform 0.9s;
     transform-style: preserve-3d;
     cursor: pointer;
 }
@@ -75,7 +80,7 @@ section {
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 1rem;
     color: white;
-    box-shadow: 0 0 0.3em rgba(255, 255, 255, 0.5);
+    // box-shadow: 0 0 0.3em rgba(255, 255, 255, 0.5);
     font-weight: 700;
 }
 
