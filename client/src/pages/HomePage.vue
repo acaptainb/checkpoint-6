@@ -5,6 +5,8 @@ import Pop from '../utils/Pop.js';
 import { eventService } from '../services/EventService.js';
 import EventArticle from '../components/EventArticle.vue';
 import { logger } from '../utils/Logger.js';
+import ModalWrapper from '../components/ModalWrapper.vue';
+import CreateAlbumForm from '../components/CreateAlbumForm.vue';
 
 const Allevents = computed(() => AppState.events)
 
@@ -33,15 +35,15 @@ async function getAllEvents() {
         <hr />
       </div>
     </section>
-    <section class="row justify-content-around">
+    <section class="row justify-content-around my-3">
       <div class="col-4 p-3 border bg-light text-dark"><i class=" fs-4 mdi mdi-magnify p-2"></i> Discover events in your
         community
         <br>
         <small> Browse through community hosted events for all the things you love </small>
       </div>
-      <div class="col-4 p-3 border bg-light text-dark"><i class="mdi mdi-plus fs-4 p-2"></i> Sarts an event to invite
-        your
-        friends
+      <div data-bs-target="#create-event-modal" data-bs-toggle="modal" role="button"
+        class="col-4 btn btn-success p-4 rounded text-center text-light fw-bold">
+        Create +
       </div>
     </section>
     <section class="row">
@@ -49,7 +51,9 @@ async function getAllEvents() {
         <h2>Explore top categories</h2>
         <hr>
         <div>
-
+          <ModalWrapper id="create-event-modal">
+            <CreateAlbumForm />
+          </ModalWrapper>
 
         </div>
       </div>

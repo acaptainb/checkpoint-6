@@ -17,7 +17,13 @@ export class EventService {
         // console.log(response.data);
         const events = response.data.map(eventData => new Event(eventData))
         AppState.events = events
-
+    }
+    async createEvent(EventData) {
+        const res = await api.post('api/events', EventData)
+        logger.log('create event is working', res.data)
+        const NewEvent = new Event(res.data)
+        AppState.events.push(NewEvent)
+        return NewEvent
     }
 
 }
