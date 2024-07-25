@@ -17,6 +17,7 @@ const EventData = ref({
 async function createEvent() {
     try {
         await eventService.createEvent(EventData.value)
+        Pop.success(`Yes Yes Yes you did it man. You created ${EventData.value.name}`)
         resetForm()
         Modal.getOrCreateInstance('#create-event-modal').hide()
     }
