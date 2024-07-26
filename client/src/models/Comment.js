@@ -9,6 +9,6 @@ export class Comment {
         this.body = data.body
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = new Date(data.updatedAt)
-        this.creator = new Account(data.creator)
+        this.creator = data.creator ? new Account(data.creator) : null
     }
 }

@@ -6,14 +6,17 @@ import Pop from '../utils/Pop.js';
 import { eventService } from '../services/EventService.js';
 import CreateComment from '../components/CreateComment.vue';
 import { commentservice } from '../services/CommentService.js';
+import { ticketService } from '../services/TicketService.js';
 
 const route = useRoute()
 const activeEvent = computed(() => AppState.activeEvents)
 const eventComments = computed(() => AppState.comments)
+const ticketProfiles = computed(() => AppState.ticketProfile)
 
 onMounted(() => {
     geteventById()
     getCommentsbyEvent()
+    getEventTicketsforEvent()
 })
 
 async function getCommentsbyEvent() {
@@ -22,6 +25,15 @@ async function getCommentsbyEvent() {
     }
     catch (error) {
         Pop.toast('couldnt get event comments');
+    }
+}
+
+async function getEventTicketsforEvent() {
+    try {
+        await ticketService.getEventTicketsforEvent(route.params.eventId)
+    }
+    catch (error) {
+        Pop.toast('could not get event tickets for event');
     }
 }
 
@@ -63,12 +75,40 @@ async function geteventById() {
                 <section class="row">
                     <div class="col-12 ">
                         <div v-for="comment in eventComments" :key="comment.id" class="border">
-                            <p>{{ comment.body }}</p>
+                            <div class="row">
+                                <div class="col-2 ">
+                                    <img class="rounded-pill" :src="comment.creator.picture" alt="">
+                                    <p class="fs-6"> <small>{{ comment.creator.name }}</small></p>
+                                </div>
+                                <div class="col-10 text-start">
+                                    <p>{{ comment.body }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
             </div>
-            <div class="col-4">
+            <div class="col-4 text center">
+                <div class="row justify-content-center my-3">
+                    <div class="col-8">
+                        <div class="text-center border rounded pt-3">
+                            <h2>Interested in going?</h2>
+                            <p>Grab a ticket</p>
+                            <button class="btn bg-success">Attend</button>
+                            <p class="text-end">{{ activeEvent.capacity }} tickets left
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <h1>Attendees</h1>
+                    <hr>
+                    <div class="col-10 border rounded" v-for="profiles in ticketProfiles" :key="profiles.id">
+                        <img class="rounded-pill img-fluid img-fixing" :src="profiles.profile.picture" alt="">
+                        <span>{{ profiles.profile.name }}</span>
+                    </div>
+                </div>
 
             </div>
         </section>
@@ -84,5 +124,9 @@ async function geteventById() {
     background-size: cover;
     height: 58vh;
     width: 100%;
+}
+
+.img-fixing {
+    height: 8dvh;
 }
 </style>
