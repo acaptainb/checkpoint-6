@@ -15,5 +15,6 @@ export class Event {
         // this.creator = new Account(data.creator)
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = new Date(data.updatedAt)
+        this.ticketCount = data.ticketCount
     }
 }

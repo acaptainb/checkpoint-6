@@ -12,6 +12,7 @@ onMounted(() => {
   getaccountticketevent()
 })
 
+
 async function getaccountticketevent() {
   try {
     await ticketService.getaccountticketevent()

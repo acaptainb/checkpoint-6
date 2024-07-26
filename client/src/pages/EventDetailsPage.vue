@@ -7,12 +7,13 @@ import { eventService } from '../services/EventService.js';
 import CreateComment from '../components/CreateComment.vue';
 import { commentservice } from '../services/CommentService.js';
 import { ticketService } from '../services/TicketService.js';
+import { logger } from '../utils/Logger.js';
 
 const route = useRoute()
 const activeEvent = computed(() => AppState.activeEvents)
 const eventComments = computed(() => AppState.comments)
 const ticketProfiles = computed(() => AppState.ticketProfile)
-
+const hasTicket = computed(() => AppState.ticketProfile.find(tp => tp.accountId == AppState.account.id))
 onMounted(() => {
     geteventById()
     getCommentsbyEvent()
@@ -25,6 +26,33 @@ async function getCommentsbyEvent() {
     }
     catch (error) {
         Pop.toast('couldnt get event comments');
+    }
+}
+
+
+async function deleteTicket(ticketId) {
+    try {
+        const choise = await Pop.confirm("are you sure!", 'question')
+        if (choise == false) {
+            Pop.toast("Ok! ", 'info', 'center')
+            return
+        }
+        await ticketService.deleteTicket(ticketId)
+        Pop.success("Ticket Deleted!")
+    } catch (error) {
+        Pop.toast("Can't not delete, you should have a ticket!", 'error')
+        logger.error(error)
+    }
+}
+
+async function getTicket() {
+    try {
+        const ticketdata = { eventId: route.params.eventId }
+
+        await ticketService.getTickets(ticketdata)
+    }
+    catch (error) {
+        Pop.toast('couldnt join the event');
     }
 }
 
@@ -89,12 +117,17 @@ async function geteventById() {
                 </section>
             </div>
             <div class="col-4 text center">
-                <div class="row justify-content-center my-3">
+                <div v-if="activeEvent" class="row justify-content-center my-3 ">
                     <div class="col-8">
                         <div class="text-center border rounded pt-3">
+                            <div class="border bg-success rounded-pill" v-if="hasTicket"> Your have a ticket , man
+                                <hr> {{ activeEvent.ticketCount }}
+                                people are attendting
+                            </div>
+
                             <h2>Interested in going?</h2>
                             <p>Grab a ticket</p>
-                            <button class="btn bg-success">Attend</button>
+                            <button @click="getTicket()" class="btn bg-success">Attend</button>
                             <p class="text-end">{{ activeEvent.capacity }} tickets left
                             </p>
                         </div>
@@ -104,9 +137,12 @@ async function geteventById() {
                 <div class="row mt-5">
                     <h1>Attendees</h1>
                     <hr>
-                    <div class="col-10 border rounded" v-for="profiles in ticketProfiles" :key="profiles.id">
+                    <div class="col-10 border rounded my-1" v-for="profiles in ticketProfiles" :key="profiles.id">
                         <img class="rounded-pill img-fluid img-fixing" :src="profiles.profile.picture" alt="">
-                        <span>{{ profiles.profile.name }}</span>
+                        <span> {{ profiles.profile.name }}</span>
+                        <span class="mx-5 px-5"> <button @click="deleteTicket(profiles.id)"
+                                class="mx-5 btn btn-outline-success rounded-pill"><i
+                                    class="mdi mdi-trash-can"></i></button></span>
                     </div>
                 </div>
 
