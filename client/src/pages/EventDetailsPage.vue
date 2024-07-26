@@ -59,8 +59,14 @@ async function geteventById() {
                 <div>
                     <h2>See what folks are saying about this {{ activeEvent.name }}</h2>
                     <CreateComment />
-                    <p>{{ eventComments }}</p>
                 </div>
+                <section class="row">
+                    <div class="col-12 ">
+                        <div v-for="comment in eventComments" :key="comment.id" class="border">
+                            <p>{{ comment.body }}</p>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div class="col-4">
 
