@@ -5,13 +5,25 @@ import { AppState } from '../AppState.js';
 import Pop from '../utils/Pop.js';
 import { eventService } from '../services/EventService.js';
 import CreateComment from '../components/CreateComment.vue';
+import { commentservice } from '../services/CommentService.js';
 
 const route = useRoute()
 const activeEvent = computed(() => AppState.activeEvents)
+const eventComments = computed(() => AppState.comments)
 
 onMounted(() => {
     geteventById()
+    getCommentsbyEvent()
 })
+
+async function getCommentsbyEvent() {
+    try {
+        await commentservice.getEventcomments(route.params.eventId)
+    }
+    catch (error) {
+        Pop.toast('couldnt get event comments');
+    }
+}
 
 async function geteventById() {
     try {
@@ -47,10 +59,11 @@ async function geteventById() {
                 <div>
                     <h2>See what folks are saying about this {{ activeEvent.name }}</h2>
                     <CreateComment />
-
+                    <p>{{ eventComments }}</p>
                 </div>
             </div>
             <div class="col-4">
+
             </div>
         </section>
 
