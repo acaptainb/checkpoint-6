@@ -12,6 +12,7 @@ export class Event {
         this.coverImg = data.coverImg
         this.isCanceled = data.isCanceled
         this.type = data.type
+        this.startDate = new Date(data.startDate)
         // this.creator = new Account(data.creator)
         this.createdAt = new Date(data.createdAt)
         this.updatedAt = new Date(data.updatedAt)

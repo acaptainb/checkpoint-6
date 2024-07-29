@@ -13,8 +13,7 @@ import Navbar from './components/Navbar.vue'
     <router-view />
   </main>
   <footer class="bg-dark text-light">
-    Made with 💖 by CodeWorks
-  </footer>
+    Made with 💖 by Abdulaziz </footer>
 </template>
 
 <style lang="scss">

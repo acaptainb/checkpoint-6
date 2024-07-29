@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { AppState } from '../AppState.js';
 import Pop from '../utils/Pop.js';
 import { eventService } from '../services/EventService.js';
@@ -9,6 +9,18 @@ import ModalWrapper from '../components/ModalWrapper.vue';
 import CreateAlbumForm from '../components/CreateAlbumForm.vue';
 
 const Allevents = computed(() => AppState.events)
+
+const typeFilter = ref('all')
+const types = ['all', 'digital', 'sport', 'concert', 'convention']
+
+const events = computed(() => {
+  if (typeFilter.value == 'all') {
+    return AppState.events
+  }
+  return AppState.events.filter(event => event.type == typeFilter.value)
+})
+
+
 
 onMounted(() => {
   getAllEvents()
@@ -48,7 +60,13 @@ async function getAllEvents() {
     </section>
     <section class="row">
       <div class="col-12">
-        <h2>Explore top categories</h2>
+        <h2>Explore top types</h2>
+        <div class="col-4" v-for="type in types" :key="type">
+          <button @click="typeFilter == type"
+            class=" w-100 text-capitalize btn btn-success p-4 rounded text-center text-light fw-bold">
+            {{ type }}
+          </button>
+        </div>
         <hr>
         <div>
           <ModalWrapper id="create-event-modal">
@@ -58,7 +76,7 @@ async function getAllEvents() {
         </div>
       </div>
     </section>
-    <section class="row ">
+    <section class="row justify-content-center">
       <div class="col-12">
         <h2>Upcoming events</h2>
         <div class="row justify-content-between">

@@ -16,19 +16,19 @@ async function writeComment() {
     try {
         await commentservice.writeComment(commentData.value)
         Pop.success('yea you just wrote comment')
-        // resetValue()
+        resetValue()
     }
     catch (error) {
         Pop.toast('couldnt write comment');
         logger.log(error)
     }
 
-    // function resetValue() {
-    //     commentData.value = {
-    //         body: '',
-    //         eventId: route.params.eventId
-    //     }
-    // }
+    function resetValue() {
+        commentData.value = {
+            body: '',
+            eventId: route.params.eventId
+        }
+    }
 }
 </script>
 
@@ -39,6 +39,7 @@ async function writeComment() {
             name="event-comments" id="event-comments" style="height: 100px"></textarea>
         <label for="event-comments">Tell the people...</label>
         <button class="bg-success">Submit</button>
+
     </form>
 </template>
 

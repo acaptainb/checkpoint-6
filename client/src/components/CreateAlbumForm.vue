@@ -3,6 +3,10 @@ import { ref } from 'vue';
 import { eventService } from '../services/EventService.js';
 import Pop from '../utils/Pop.js';
 import { Modal } from 'bootstrap';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute()
+const router = useRouter()
 
 const EventData = ref({
     name: '',
@@ -16,10 +20,12 @@ const EventData = ref({
 
 async function createEvent() {
     try {
-        await eventService.createEvent(EventData.value)
+        const newEvent = await eventService.createEvent(EventData.value)
         Pop.success(`Yes Yes Yes you did it man. You created ${EventData.value.name}`)
         resetForm()
         Modal.getOrCreateInstance('#create-event-modal').hide()
+        router.push({ name: 'Event Details', params: { eventId: newEvent.id }, })
+        // this.$router.push(`${route.params.eventId}`)
     }
     catch (error) {
         Pop.error(error);

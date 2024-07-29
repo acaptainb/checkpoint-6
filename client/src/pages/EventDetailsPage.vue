@@ -9,11 +9,15 @@ import { commentservice } from '../services/CommentService.js';
 import { ticketService } from '../services/TicketService.js';
 import { logger } from '../utils/Logger.js';
 
+
 const route = useRoute()
+const account = computed(() => AppState.account)
 const activeEvent = computed(() => AppState.activeEvents)
 const eventComments = computed(() => AppState.comments)
 const ticketProfiles = computed(() => AppState.ticketProfile)
-const hasTicket = computed(() => AppState.ticketProfile.find(tp => tp.accountId == AppState.account.id))
+// const hasTicket = computed(() => AppState.ticketProfile.find(tp => tp.accountId == AppState.account.id))
+const hasTicket = computed(() => AppState?.account?.id ? AppState.ticketProfile?.find(tp => tp.accountId === AppState.account.id) : false);
+// NOTE sometimes appstates is null how do we keep it from accessing .id until the acc is there
 onMounted(() => {
     geteventById()
     getCommentsbyEvent()
@@ -29,6 +33,16 @@ async function getCommentsbyEvent() {
     }
 }
 
+async function cancelEvent() {
+    try {
+        let event = AppState.activeEvents
+        await eventService.cancelEvent(event.id)
+        AppState.activeEvents.isCanceled = true
+        Pop.success('Event Canceled.')
+    } catch (error) {
+        Pop.error(error)
+    }
+}
 
 async function deleteTicket(ticketId) {
     try {
@@ -65,6 +79,15 @@ async function getEventTicketsforEvent() {
     }
 }
 
+async function removeComment(commentId) {
+    try {
+        await commentservice.removeComments(commentId)
+    }
+    catch (error) {
+        Pop.toast('couldnt delete comment');
+    }
+}
+
 async function geteventById() {
     try {
         await eventService.getEventById(route.params.eventId)
@@ -91,7 +114,8 @@ async function geteventById() {
                         }}</span></h1>
                 <p class="fs-3">{{ activeEvent.description }}</p>
                 <h1>Date and Time</h1>
-                <p class="fs-4"> <i class=" text-primary mdi mdi-calendar"></i> Starts {{ activeEvent.createdAt }}</p>
+                <p class="fs-4"> <i class=" text-primary mdi mdi-calendar"></i> Starts {{
+                    activeEvent.startDate.toLocaleString() }}</p>
                 <h2>Location</h2>
                 <p class="fs-4"> <i class=" text-primary mdi mdi-map-marker"></i>{{ activeEvent.location }}</p>
                 <hr>
@@ -103,14 +127,16 @@ async function geteventById() {
                 <section class="row">
                     <div class="col-12 ">
                         <div v-for="comment in eventComments" :key="comment.id" class="border">
-                            <div class="row">
+                            <div class="row ">
                                 <div class="col-2 ">
                                     <img class="rounded-pill" :src="comment.creator.picture" alt="">
                                     <p class="fs-6"> <small>{{ comment.creator.name }}</small></p>
                                 </div>
-                                <div class="col-10 text-start">
+                                <div class="col-9 text-start">
                                     <p>{{ comment.body }}</p>
                                 </div>
+                                <div class="col-1"><button @click="removeComment(comment.id)" class="btn bg-success"><i
+                                            class="mdi mdi-trash-can"></i></button></div>
                             </div>
                         </div>
                     </div>
@@ -121,14 +147,19 @@ async function geteventById() {
                     <div class="col-8">
                         <div class="text-center border rounded pt-3">
                             <div class="border bg-success rounded-pill" v-if="hasTicket"> Your have a ticket , man
-                                <hr> {{ activeEvent.ticketCount }}
-                                people are attendting
                             </div>
+                            <div v-if="activeEvent.creatorId == account.id" class="text-center">
+                                <button @click="cancelEvent()" class="btn btn-warning mb-3" title="Cancel Event">Cancel
+                                    Event</button>
+                            </div>
+                            <div v-if="activeEvent.capacity == 0">Sold out</div>
 
                             <h2>Interested in going?</h2>
                             <p>Grab a ticket</p>
-                            <button @click="getTicket()" class="btn bg-success">Attend</button>
+                            <button :disabled="activeEvent.capacity == 0" @click="getTicket()"
+                                v-if="activeEvent.capacity >= 1" class="btn bg-success">Attend</button>
                             <p class="text-end">{{ activeEvent.capacity }} tickets left
+                            <p>{{ activeEvent.ticketCount }} people are attending</p>
                             </p>
                         </div>
                     </div>
