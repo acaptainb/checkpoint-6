@@ -8,8 +8,8 @@ defineProps({ Towerevent: Event })
 
 <template>
     <section>
-        <div class="row">
-            <div class="col-4 ">
+        <div class="row text-center">
+            <div class="col-4 text-center ">
                 <RouterLink :to="{ name: 'Event Details', params: { eventId: Towerevent.id } }">
                     <div class="myCard my-2">
                         <div class="innerCard">

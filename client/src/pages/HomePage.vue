@@ -8,11 +8,9 @@ import { logger } from '../utils/Logger.js';
 import ModalWrapper from '../components/ModalWrapper.vue';
 import CreateAlbumForm from '../components/CreateAlbumForm.vue';
 
-const Allevents = computed(() => AppState.events)
-
 const typeFilter = ref('all')
-const types = ['all', 'digital', 'sport', 'concert', 'convention']
 
+const types = ['all', 'digital', 'sport', 'concert', 'convention']
 const events = computed(() => {
   if (typeFilter.value == 'all') {
     return AppState.events
@@ -61,11 +59,13 @@ async function getAllEvents() {
     <section class="row">
       <div class="col-12">
         <h2>Explore top types</h2>
-        <div class="col-4" v-for="type in types" :key="type">
-          <button @click="typeFilter == type"
-            class=" w-100 text-capitalize btn btn-success p-4 rounded text-center text-light fw-bold">
-            {{ type }}
-          </button>
+        <div class="d-flex flex-wrap gap-1">
+          <div class="" v-for="type in types" :key="type">
+            <button @click="typeFilter = type"
+              class=" w-100 btn btn-success p-4 rounded text-center text-light fw-bold">
+              {{ type }}
+            </button>
+          </div>
         </div>
         <hr>
         <div>
@@ -80,7 +80,7 @@ async function getAllEvents() {
       <div class="col-12">
         <h2>Upcoming events</h2>
         <div class="row justify-content-between">
-          <article class="col-12 col-md-4" v-for="Towerevent in Allevents" :key="Towerevent.id">
+          <article class="col-12 col-md-4" v-for="Towerevent in events" :key="Towerevent.id">
             <EventArticle :Towerevent="Towerevent" />
           </article>
         </div>

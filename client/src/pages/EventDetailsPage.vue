@@ -33,7 +33,7 @@ async function getCommentsbyEvent() {
     }
 }
 
-async function cancelEvent() {
+async function cancelEvent(eventId) {
     try {
         let event = AppState.activeEvents
         await eventService.cancelEvent(event.id)
@@ -102,12 +102,11 @@ async function geteventById() {
 
 <template>
     <div class="container-container" v-if="activeEvent != null">
-        <section class="row justify-content-center">
-            <div class="col-11 img-fluid text-center border-outline rounded">
+
+        <section class="row justify-content-center" v-if="!activeEvent.isCanceled">
+            <div class="col-12  text-center border-outline rounded">
                 <img class="img-fix" :src="activeEvent.coverImg" :alt="activeEvent.name">
             </div>
-        </section>
-        <section class="row justify-content-center">
             <div class="col-7">
                 <h1>{{ activeEvent.name }} <span
                         class="border rounded bg-primary fs-6 fst-italic text-decoration-underline"> {{ activeEvent.type
@@ -148,15 +147,17 @@ async function geteventById() {
                         <div class="text-center border rounded pt-3">
                             <div class="border bg-success rounded-pill" v-if="hasTicket"> Your have a ticket , man
                             </div>
-                            <div v-if="activeEvent.creatorId == account.id" class="text-center">
-                                <button @click="cancelEvent()" class="btn btn-warning mb-3" title="Cancel Event">Cancel
+                            <!-- v-if="activeEvent.creatorId == account.id" -->
+                            <div class="text-center">
+                                <button @click="cancelEvent(activeEvent.id)" class="btn btn-warning mb-3"
+                                    title="Cancel Event">Cancel
                                     Event</button>
                             </div>
-                            <div v-if="activeEvent.capacity == 0">Sold out</div>
+                            <div v-if="activeEvent.capacity - activeEvent.ticketCount <= 0">Sold out</div>
 
                             <h2>Interested in going?</h2>
                             <p>Grab a ticket</p>
-                            <button :disabled="activeEvent.capacity == 0" @click="getTicket()"
+                            <button :disabled="activeEvent.capacity - activeEvent.ticketCount <= 0" @click="getTicket()"
                                 v-if="activeEvent.capacity >= 1" class="btn bg-success">Attend</button>
                             <p class="text-end">{{ activeEvent.capacity }} tickets left
                             <p>{{ activeEvent.ticketCount }} people are attending</p>
@@ -168,7 +169,7 @@ async function geteventById() {
                 <div class="row mt-5">
                     <h1>Attendees</h1>
                     <hr>
-                    <div class="col-10 border rounded my-1" v-for="profiles in ticketProfiles" :key="profiles.id">
+                    <div class="col-12 border rounded my-1" v-for="profiles in ticketProfiles" :key="profiles.id">
                         <img class="rounded-pill img-fluid img-fixing" :src="profiles.profile.picture" alt="">
                         <span> {{ profiles.profile.name }}</span>
                         <span class="mx-5 px-5"> <button @click="deleteTicket(profiles.id)"
@@ -180,6 +181,9 @@ async function geteventById() {
             </div>
         </section>
 
+        <section v-else>
+            This event was canceled
+        </section>
     </div>
 </template>
 
@@ -187,10 +191,10 @@ async function geteventById() {
 <style lang="scss" scoped>
 .img-fix {
     background-position: center;
-    object-fit: 1/1;
+    // aspect-ratio: 1/1;
     background-size: cover;
     height: 58vh;
-    width: 100%;
+    width: 130vh;
 }
 
 .img-fixing {
